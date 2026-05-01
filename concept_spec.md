@@ -16,17 +16,37 @@ The platform is agile by design — built iteratively in small feedback loops, a
 
 ## 2. Scope
 
-### Phase 1 (current focus): CO2 Impact
-- Building type: standard residential tower ("woontoren")
-- CO2 split into two components: **Material** and **Energy**
-- Parametric inputs drive structural and energy calculations
+### Modules
 
-### Phase 2 (deferred): Microclimate
+| Module | Section | Status |
+|---|---|---|
+| Material | CO2 | Active — Layer 1 (lookup tables) |
+| Energie | CO2 | Active — Layer 1 (lookup tables), parallel with Material |
+| Microclimate | Microclimate | Deferred — begins after both CO2 modules are stable |
+
+### Layers (per module)
+
+**Layer 1 — Lookup (current target for all modules):**
+Parametric UI backed by hardcoded lookup tables. Goal: stable, sellable platform.
+This IS the product — not a stepping stone.
+
+**Layer 2 — Calculation engine (strategic decision deferred):**
+Python/Excel engine replacing lookup tables. May change product type (web → software).
+Decision made only after Layer 1 of all three modules is in active use.
+
+### Development sequence
+Material + Energie Layer 1 in parallel → Microclimate Layer 1 → Layer 2 decision (TBD)
+
+### Microclimate module
 - Dependent on an external simulation tool currently under development
 - Will cover: heat stress (hittestress) and stay comfort (verblijfscomfort)
 - Metrics: PETmax, PETdag, PETnacht, UTCI (by activity: walking, sitting, playing)
 - Green scenarios: none / 30% random / >60% wrongly placed / >60% correctly placed
 - Output at grid level (spatial heatmap)
+- **Location is a mandatory input** for this module
+
+### Location-awareness for CO2 modules
+Decision deferred until Layer 1 of Material + Energie is complete and in use.
 
 ---
 
@@ -246,7 +266,8 @@ This graph shows the *marginal CO2 cost* of each additional floor — spikes app
 ## 9. Development Approach
 
 - Agile, iterative — small feedback loops, always deployable
-- Phase 1: CO2 only, standard woontoren, hardcoded data from Excel
-- Phase 2: Microclimate module added when external tool is ready
-- Phase 3: Python calculation engine replaces hardcoded values
-- Later: location-based context, expanded building types, masterplan-level aggregation
+- **Now**: Material + Energie modules in parallel, Layer 1 (lookup tables)
+- **Next**: Microclimate module Layer 1, once both CO2 modules are stable
+- **Later (strategic decision deferred)**: Layer 2 calculation engine — may change product type
+- Location for CO2: decided after Layer 1 CO2 is in use
+- Location for Microclimate: mandatory from the start

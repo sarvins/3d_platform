@@ -1,7 +1,7 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Version change: 1.1.0 → 1.2.0 (MINOR — four blocking gaps resolved, two table corrections)
+Version change: 1.2.0 → 1.3.0 (MINOR — Principle II rewritten: module+layer model replaces phase model)
 Modified principles:
   - II. Phase-Gated Scope: Phase 2 entry replaced with concrete checklist (no longer prose)
   - III. Parametric Integrity: threshold table re-expressed in meters (primary) + floors (proxy)
@@ -39,37 +39,81 @@ Complexity MUST NOT accumulate between deployable states.
 **Rationale**: The platform is a client-facing advisory tool. A working demo at every stage
 is more valuable than a feature-complete product that is never seen.
 
-### II. Phase-Gated Scope
+### II. Module & Layer Structure
 
-Development is organised into explicit phases with locked scope:
+The platform is organised into **three modules** and **two layers**. These are independent
+axes: a module is a domain, a layer is a depth of implementation.
 
-- **Phase 1** — CO2 impact only; standard woontoren (25×25m); hardcoded data from lookup tables.
-- **Phase 2** — Microclimate module (hittestress, verblijfscomfort).
-- **Phase 3** — Python/Excel calculation engine replaces hardcoded data.
-- **Phase 4+** — Location-aware context, expanded building types, masterplan aggregation.
+#### Modules
 
-No phase MUST be started before its predecessor is validated and the phase entry checklist
-is signed off. Scope expansion into a later phase REQUIRES explicit decision, documented
-as an amendment to this constitution.
+| Module | Domain | Groups into |
+|---|---|---|
+| **Material** | Embodied CO2 from construction materials | CO2 section |
+| **Energie** | Operational energy use and CO2 | CO2 section |
+| **Microclimate** | Heat stress, stay comfort, PET/UTCI metrics | Microclimate section |
 
-**Phase 2 entry checklist** — ALL of the following MUST be true before any Phase 2 work begins:
+Material and Energie together form the **CO2 section** of the platform.
+Microclimate is a separate section, dependent on an external simulation tool.
 
+#### Layers
+
+Every module is developed through two layers in sequence:
+
+**Layer 1 — Lookup (current target):**
+The UI is fully parametric and interactive. In the background, all outputs are served from
+hardcoded lookup tables. The user cannot tell the difference. The goal of Layer 1 is a
+**stable, sellable platform** — not an internal milestone. Layer 1 IS the product for the
+foreseeable future.
+
+**Layer 2 — Calculation engine (strategic fork, decision deferred):**
+A Python/Excel engine replaces the lookup tables with live computation. This may change
+the product type — from a web platform to a desktop application or thick-client tool.
+Whether a web platform remains the right delivery format at Layer 2 is an open strategic
+decision that MUST NOT be made until Layer 1 of all three modules is complete and
+in active use. This constitution MUST be amended with that decision when the time comes.
+Premature Layer 2 investment risks over-engineering a product before its value is validated.
+
+#### Development sequence
+
+```
+Material (Layer 1) ──┐
+                     ├──> both complete ──> Microclimate (Layer 1)
+Energie  (Layer 1) ──┘
+```
+
+Material and Energie MUST be developed in parallel (they are independent modules).
+Microclimate MUST NOT begin until both Material and Energie Layer 1 are complete and stable.
+
+**Layer 2 for any module**: decision deferred — requires a strategic amendment.
+
+#### Location-awareness
+
+- **Microclimate**: location is a **mandatory input**. The module MUST NOT be specced or
+  built without a location model in scope.
+- **CO2 (Material + Energie)**: location impact on calculations is **not yet decided**.
+  This decision MUST be made after Layer 1 of both CO2 modules is complete and in use.
+  Until then, location for CO2 is out of scope.
+
+#### Microclimate module entry checklist
+
+Microclimate MUST NOT begin until ALL of the following are true:
+
+- [ ] Material Layer 1 is complete, deployed, and stable.
+- [ ] Energie Layer 1 is complete, deployed, and stable.
 - [ ] The external microclimate simulation tool exposes a documented, stable API endpoint
       (not a prototype or local script).
-- [ ] At least one successful programmatic test call has been made from this codebase,
-      with a real response parsed and logged.
-- [ ] The tool's output schema (PET, UTCI format, spatial grid structure) is documented
-      and agreed in writing with the tool owner.
-- [ ] A team member has been designated as Phase 2 module owner, with domain knowledge
-      of microclimate metrics.
-- [ ] This constitution has been amended to include Phase 2 data contracts and UI spec.
+- [ ] At least one successful programmatic test call has been made from this codebase.
+- [ ] The tool's output schema (PET, UTCI format, grid structure) is agreed in writing.
+- [ ] A team member with microclimate domain knowledge is designated as module owner.
+- [ ] This constitution has been amended to include Microclimate data contracts and UI spec.
 
-If client pressure creates urgency to start Phase 2 before this checklist is met,
-the Product Owner MUST document the unmet items and accept the risk in writing.
-"Available" means all five items checked — not a demo, not a verbal confirmation.
+If client pressure pushes to start Microclimate before this checklist is met, the Product
+Owner MUST document unmet items and accept the risk in writing. "Ready" means all items
+checked — not a demo, not a verbal confirmation.
 
-**Rationale**: CFD-based microclimate simulations are notorious sprint-killers. An unclear
-entry gate is the single most likely point of scope violation under client pressure.
+**Rationale**: CFD-based microclimate simulations are notorious sprint-killers. Layer 1 of
+CO2 modules is the sellable foundation; Microclimate is the extension. Inverting this order
+risks delivering nothing shippable while waiting on an external dependency.
 
 ### III. Parametric Integrity
 
@@ -293,4 +337,4 @@ is affected. Compliance MUST be reviewed at every phase boundary.
 Use `concept_spec.md` as the living runtime reference for product decisions.
 Use `.specify/memory/constitution.md` (this file) as the governing principles document.
 
-**Version**: 1.2.0 | **Ratified**: 2026-05-01 | **Last Amended**: 2026-05-01
+**Version**: 1.3.0 | **Ratified**: 2026-05-01 | **Last Amended**: 2026-05-01
