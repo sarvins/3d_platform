@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bash .specify/scripts/bash/create-new-feature.sh \"Material module — CO2 embodied carbon calculator for standard woontoren \\(25x25m\\). Layer 1: parametric UI backed by hardcoded lookup tables.\" --json --short-name \"co2-material-module\" \"CO2 Material Module\")"
+    ]
+  }
+}
