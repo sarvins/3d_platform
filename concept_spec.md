@@ -52,9 +52,10 @@ Decision deferred until Layer 1 of Material + Energie is complete and in use.
 
 ## 3. Tech Stack
 
-- **Frontend:** Three.js + HTML/CSS/JavaScript
-- **Calculations:** Python (converted from Excel, initially hardcoded)
-- **Optional 3D/2D preview:** Three.js building module (nice-to-have, toggle on/off)
+- **Frontend:** HTML/CSS/JavaScript
+- **3D viewer:** Three.js — mandatory, abstract parametric model (cubic, schematic)
+- **2D charts:** Chart.js — mandatory, CO2 vs. floors with threshold annotations
+- **Calculations:** Python (converted from Excel, initially hardcoded lookup tables)
 
 ---
 
@@ -152,9 +153,18 @@ Fine-grained parameters that affect energy consumption and envelope performance.
 | Luchtdichtheid (air tightness) | Hoog (high = tight) | Norm (standard) |
 | Lift energy use | Zuinig (efficient) | Standaard (standard) |
 
-#### 5.2.3 Optional: Building Preview
+#### 5.2.3 3D Parametric Viewer (Mandatory)
 
-A 2D or 3D visual representation of the tower module that updates based on Step 2 choices (e.g. balcony type, glazing ratio). Toggled on/off by the user. This is a **nice-to-have**, not a must-have for the first iteration.
+A Three.js abstract cubic model of the tower that updates reactively as parameters change.
+Not a BIM model — simple extruded geometry only, no facade detail, no textures.
+Goal: show structural consequence, not architectural appearance.
+
+- **Floors**: continuous update via InstancedMesh
+- **Foundation piles**: continuous depth scaling
+- **Core / elevators**: update at threshold crossings
+- **Glazing ratio**: discrete 10% steps via facade shader (matches data resolution)
+- **Balcony / solar shading**: shown on one representative floor module only
+- Target scene complexity: < 15k triangles
 
 ---
 

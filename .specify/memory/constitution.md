@@ -229,11 +229,44 @@ multi-line graphs, annotated vertical threshold bands, and dynamic reactive upda
 The CO2 vs. floor count curve with threshold annotations IS the primary product of Phase 1.
 A table cannot fulfil this requirement.
 
-**3D model is optional.** The Three.js building preview MAY be deferred or toggled off.
-It MUST NOT gate any Phase 1 delivery milestone.
+**3D model is MANDATORY.** A Three.js parametric building viewer MUST ship as part of
+the platform. It is the spatial counterpart to the chart — where the chart shows CO2 cost
+over floors, the 3D model shows *what* is changing and *why*. Together they form the
+complete advisory moment.
 
-**Rationale**: The chart is the product. Threshold annotations turn a data plot into an
-advisory moment. A flat table of numbers produces no insight about non-linear structural cost.
+**Visual language — abstract and cubic, not BIM:**
+The model MUST be a schematic parametric diagram, not an architectural model.
+No facade detail, no materials textures, no window mullions. Simple extruded geometry only.
+The goal is legibility of structural logic, not visual realism.
+
+**Reactive elements and rendering rules:**
+
+| Element | Update mode | Technique |
+|---|---|---|
+| Floor count | Continuous — updates on every stepper click | `InstancedMesh` (one draw call) |
+| Foundation piles | Continuous — depth scales with floor count | Scaled cylinder geometry |
+| Core variant | Updates at threshold crossing | Swap geometry at event |
+| Elevator count | Updates at threshold crossing | Show/hide shaft geometry |
+| Glazing ratio | Discrete steps of 10% (30–80%) | Facade shader uniform |
+| Balcony type | Schematic — one representative floor shown | Swap module geometry |
+| Solar shading | Schematic — one representative floor shown | Swap module geometry |
+
+Glazing MUST use a **facade shader** — a custom Three.js material with `glazing_ratio`
+as a uniform. No geometry rebuild on glazing change. Discrete 10% steps are used not for
+performance reasons but because the lookup data does not support finer resolution —
+a continuous slider would imply false precision the data cannot back.
+
+Balcony type and solar shading MUST be shown on a single representative floor module,
+not repeated across all floors. Repeating across all floors is computationally unnecessary
+and visually noisy — the schematic intent is communicated by one instance.
+
+Target scene complexity: **< 15k triangles total**. This keeps render time under 1ms
+per frame regardless of floor count, on any modern device including low-end laptops.
+
+**Rationale**: The chart shows cost. The 3D model shows consequence. Piles visibly growing
+deeper as floors increase communicates foundation cost more directly than any number.
+A BIM-level model would obscure the structural logic under architectural detail — the
+opposite of advisory clarity.
 
 ### VI. Testing Requirements
 
@@ -288,7 +321,10 @@ an order-of-magnitude advisory tool in Phase 1 — not a precision calculator.
 - **Calculations**: Phase 1 — JSON lookup. Phase 3 — Excel-backed or formula engine.
   Calculation logic MUST be separated from rendering logic at all times.
 - **Data files**: Single versioned JSON file per domain. Must contain `data_version` field.
-- **3D model**: Optional Three.js building preview; toggleable. MUST NOT block delivery.
+- **3D model**: Mandatory Three.js parametric viewer. Abstract cubic geometry only —
+  no BIM detail. InstancedMesh for floors, scaled geometry for piles, facade shader
+  for glazing, swappable module geometry for balcony/shading. Target: < 15k triangles.
+  Glazing ratio input MUST be discrete (10% steps) to match data resolution.
 - **No backend server in Phase 1**: All computation client-side via static data.
 - **External dependencies**: Microclimate tool (Phase 2 only) — integration pattern TBD.
 
@@ -337,4 +373,4 @@ is affected. Compliance MUST be reviewed at every phase boundary.
 Use `concept_spec.md` as the living runtime reference for product decisions.
 Use `.specify/memory/constitution.md` (this file) as the governing principles document.
 
-**Version**: 1.3.0 | **Ratified**: 2026-05-01 | **Last Amended**: 2026-05-01
+**Version**: 1.4.0 | **Ratified**: 2026-05-01 | **Last Amended**: 2026-05-01
