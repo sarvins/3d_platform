@@ -135,24 +135,18 @@ a human-readable label. This metadata drives UI advisory moments — it is not o
 
 **Threshold table** (Phase 1 baseline, heights derived from floor count × 3.5m):
 
-| Height (m) | (~floors) | GFA/floor | Effect | threshold_reached label |
-|---|---|---|---|---|
-| < 7m | < 2 | 625 m² | No elevator; shallow foundation | — |
-| ~31.5m | ~9 | 625 m² | ⚠️ First elevator required | `"Vertical Transport Level 1"` |
-| ~35m | ~10 | 625 m² | Stability system activates | `"Structural Stability System Activated"` |
-| ~98m | ~28 | 625 m² | ⚠️ 3rd elevator required | `"Vertical Transport Level 2"` |
-| ~133m | ~38 | 625 m² | ⚠️ 4th elevator required | `"Vertical Transport Level 3"` |
-| ~250m | ~71 | 625 m² | 5 elevators + shell stability (max) | `"Maximum Height Regime"` |
+| Floors | Height (m) | GFA/floor | Effect | threshold_reached label | Status |
+|---|---|---|---|---|---|
+| < 2 | < 7m | 625 m² | No elevator; shallow foundation | — | confirmed |
+| 9 | ~31.5m | 625 m² | 1st elevator required | `"Vertical Transport Level 1"` | confirmed |
+| ~16 | ~56m | 625 m² | 2nd elevator required | `"Vertical Transport Level 2"` | **assumed** |
+| 28 | ~98m | 625 m² | 3rd elevator required | `"Vertical Transport Level 3"` | confirmed |
+| ~38 | ~133m | 625 m² | 4th elevator required | `"Vertical Transport Level 4"` | assumed |
+| ~71 | 250m | 625 m² | 5th elevator + shell stability (max) | `"Maximum Height Regime"` | confirmed |
 
-*Note: floor count approximations assume 3.5m floor-to-floor. Authoritative values are meters.*
-
-> **⚠️ TODO(LIFT_THRESHOLDS):** Inconsistency flagged — needs verification before implementation.
-> The source diagrams show the first elevator triggering at "< 35m / 9 floors" but 9 × 3.5m = 31.5m,
-> not 35m. It is unclear whether the trigger is at ~9 floors (~31.5m) or at the ~35m mark itself.
-> Similarly, the 2nd elevator threshold is missing from this table entirely — the source data shows
-> thresholds at #4 (liften), #7 (liften), #10 (liften), #12 (liften), but only the 1st, 3rd, and
-> 4th are listed here. The 2nd elevator threshold height and floor count are unconfirmed.
-> **This table MUST NOT be used to build lookup data until verified against the original Excel/source.**
+*Floor count is primary input. Height = floors × 3.5m (TODO(FLOOR_HEIGHT): confirm floor height).*
+*Rows marked **assumed** MUST be verified with the team before the lookup table is finalised.*
+*Stability system threshold also needs confirmation — assumed to activate around 9–10 floors.*
 
 **Rationale**: Allowing arbitrary overrides produces physically invalid outputs.
 Threshold metadata ensures cliff edges are visible and drive advisory moments.
