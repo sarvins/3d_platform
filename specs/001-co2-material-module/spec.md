@@ -79,8 +79,8 @@ An urban design professional increases floor count past a structural threshold (
 - **FR-001**: The system MUST display the CO2 material impact in kg CO2/m² for the current floor count and selected bouwmethodiek, updating reactively without page reload.
 - **FR-002**: The system MUST allow users to set floor count between 2 and 71 using a + / − stepper control.
 - **FR-003**: The system MUST offer four bouwmethodiek options: Business as usual, Hoogwaardig hybride, Best practice bio-based, Max innovatief.
-- **FR-004**: The system MUST display a chart showing CO2 material impact (kg CO2/m²) vs floor count (2–50) for the three principal scenarios (conventioneel, hybride, biobased) simultaneously at all times.
-- **FR-005**: The system MUST indicate the user's current floor count on the chart with a visible marker.
+- **FR-004**: The system MUST display a chart showing CO2 material impact (kg CO2/m²) vs floor count (2–50) for three permanently visible lines: conventioneel (= Business as usual data), hybride (= Hoogwaardig hybride data), biobased (= Best practice bio-based data). Max innovatief data is shown only in the metric panel, not as a chart line.
+- **FR-005**: The system MUST indicate the user's current floor count on the chart with a vertical dashed line spanning the full chart height. This marker is always visible regardless of which bouwmethodiek is selected, and is not attached to any specific data line.
 - **FR-006**: The system MUST display an advisory callout when a structural threshold is crossed (elevator step-up, foundation depth change, core variant change, stability system activation).
 - **FR-007**: The system MUST show the active core variant (label A–E, dimensions in metres, net area in m²) in the output panel.
 - **FR-008**: The system MUST show the active elevator count, foundation type, and stability system description in the output panel.
@@ -91,14 +91,15 @@ An urban design professional increases floor count past a structural threshold (
 - **FR-013**: All CO2 output values MUST be labelled with a tolerance disclaimer (±5–10 kg CO2/m², illustrative data).
 - **FR-014**: All structural decisions (core variant, foundation type, elevator count, stability system) MUST be derived automatically from floor count. Users MUST NOT be able to manually override these values.
 - **FR-015**: The system MUST be accessible in a standard desktop browser without installation, login, or account creation.
-- **FR-016**: The 3D model MUST carry a persistent visible label identifying it as a parametric preview, not a design environment.
+- **FR-016**: The 3D model MUST carry a persistent visible label identifying it as a parametric preview, not a design environment. This label is in English ("Parametric preview — not a design environment").
+- **FR-017**: All domain-facing labels, input option names, chart axis titles, output panel labels, and advisory callout text MUST be in Dutch. Tolerance disclaimers and the 3D viewer label are in English.
 
 ### Key Entities
 
 - **TowerConfiguration**: The user's current input state — floor count (integer, 2–71) and bouwmethodiek (one of four options). This is the sole input to the calculation layer.
 - **ImpactResult**: The computed output for a given TowerConfiguration — includes co2_material_kg_m2, structural state (core_variant, elevator_count, foundation_type, stability_system), thresholds_crossed (list of threshold events), data_version, and tolerance_note.
 - **ThresholdEvent**: A structural step-change triggered by a floor count crossing — includes a human-readable label, the affected structural parameter, and the direction of change (up or down). Drives both advisory callouts and 3D model updates.
-- **LookupTable**: Maps floor count to co2_material_kg_m2 per bouwmethodiek. Versioned, illustrative values read from source graphs (Layer 1). Replaced by a calculation engine in a later layer.
+- **LookupTable**: Maps floor count to co2_material_kg_m2 per bouwmethodiek. Contains 4 separate data rows — one per bouwmethodiek option (Business as usual, Hoogwaardig hybride, Best practice bio-based, Max innovatief). Versioned, illustrative values read from source graphs (Layer 1). Replaced by a calculation engine in a later layer.
 
 ---
 
@@ -115,6 +116,17 @@ An urban design professional increases floor count past a structural threshold (
 
 ---
 
+## Clarifications
+
+### Session 2026-05-01
+
+- Q: What language should the platform UI use? → A: Dutch primary — all domain labels, input options, chart axes, and advisory callouts in Dutch. Technical disclaimers (tolerance note, "parametric preview" label) in English.
+- Q: How do the 4 bouwmethodiek input options map to the 3 chart lines, and does Max innovatief have its own lookup data? → A: All 4 options have separate lookup data rows. Business as usual maps to the conventioneel chart line, Hoogwaardig hybride to hybride, Best practice bio-based to biobased. Max innovatief has its own data row and is shown in the output metric panel but is not plotted as a chart line in Layer 1.
+- Q: What is the default state when the platform first loads? → A: 10 floors, Business as usual selected.
+- Q: How does the chart marker indicate the current floor count, especially when Max innovatief is selected? → A: A vertical dashed line at the current floor count — always visible, not attached to any specific data line, works identically for all 4 bouwmethodiek options.
+
+---
+
 ## Assumptions
 
 - Building footprint is fixed at 25×25m = 625 m² GFA per floor. No footprint variation is in scope for this module.
@@ -122,7 +134,7 @@ An urban design professional increases floor count past a structural threshold (
 - Structural threshold floor counts used in Layer 1: 1st elevator at 9 floors, 2nd elevator at ~16 floors (assumed), 3rd elevator at 28 floors, 4th elevator at ~38 floors (assumed). These must be confirmed with the team.
 - Floor-to-floor height is assumed at 3.5m for any height-based display or conversion. To be confirmed from structural source data.
 - The 3D model is a schematic parametric diagram — it responds to user inputs but does not accept geometric input. Users cannot draw, move, or resize any geometry.
-- No session state is persisted between page loads. Refreshing the browser resets all inputs to their defaults.
+- The platform opens in a defined default state: 10 floors, Business as usual. No session state is persisted between page loads — refreshing always returns to this default.
 - No user authentication, analytics, or tracking is in scope for Layer 1.
 - "Max innovatief" is available as a bouwmethodiek input but is not plotted as a fourth chart line in Layer 1. Its CO2 metric value is shown in the output panel only.
 - Brand (fire safety CO2) component is excluded from Layer 1 outputs. A placeholder is shown where it would appear. The calculation method must be confirmed before Layer 2.
