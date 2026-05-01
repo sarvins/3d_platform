@@ -1,7 +1,7 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Version change: 1.2.0 → 1.3.0 (MINOR — Principle II rewritten: module+layer model replaces phase model)
+Version change: 1.4.0 → 1.5.0 (MINOR — lift threshold inconsistency flagged, 3D purpose clarified, file structure added)
 Modified principles:
   - II. Phase-Gated Scope: Phase 2 entry replaced with concrete checklist (no longer prose)
   - III. Parametric Integrity: threshold table re-expressed in meters (primary) + floors (proxy)
@@ -138,13 +138,21 @@ a human-readable label. This metadata drives UI advisory moments — it is not o
 | Height (m) | (~floors) | GFA/floor | Effect | threshold_reached label |
 |---|---|---|---|---|
 | < 7m | < 2 | 625 m² | No elevator; shallow foundation | — |
-| < 35m | < 10 | 625 m² | First elevator required at ~31.5m | `"Vertical Transport Level 1"` |
+| ~31.5m | ~9 | 625 m² | ⚠️ First elevator required | `"Vertical Transport Level 1"` |
 | ~35m | ~10 | 625 m² | Stability system activates | `"Structural Stability System Activated"` |
-| ~98m | ~28 | 625 m² | 3rd elevator required | `"Vertical Transport Level 2"` |
-| ~133m | ~38 | 625 m² | 4th elevator required | `"Vertical Transport Level 3"` |
+| ~98m | ~28 | 625 m² | ⚠️ 3rd elevator required | `"Vertical Transport Level 2"` |
+| ~133m | ~38 | 625 m² | ⚠️ 4th elevator required | `"Vertical Transport Level 3"` |
 | ~250m | ~71 | 625 m² | 5 elevators + shell stability (max) | `"Maximum Height Regime"` |
 
 *Note: floor count approximations assume 3.5m floor-to-floor. Authoritative values are meters.*
+
+> **⚠️ TODO(LIFT_THRESHOLDS):** Inconsistency flagged — needs verification before implementation.
+> The source diagrams show the first elevator triggering at "< 35m / 9 floors" but 9 × 3.5m = 31.5m,
+> not 35m. It is unclear whether the trigger is at ~9 floors (~31.5m) or at the ~35m mark itself.
+> Similarly, the 2nd elevator threshold is missing from this table entirely — the source data shows
+> thresholds at #4 (liften), #7 (liften), #10 (liften), #12 (liften), but only the 1st, 3rd, and
+> 4th are listed here. The 2nd elevator threshold height and floor count are unconfirmed.
+> **This table MUST NOT be used to build lookup data until verified against the original Excel/source.**
 
 **Rationale**: Allowing arbitrary overrides produces physically invalid outputs.
 Threshold metadata ensures cliff edges are visible and drive advisory moments.
@@ -263,10 +271,29 @@ and visually noisy — the schematic intent is communicated by one instance.
 Target scene complexity: **< 15k triangles total**. This keeps render time under 1ms
 per frame regardless of floor count, on any modern device including low-end laptops.
 
-**Rationale**: The chart shows cost. The 3D model shows consequence. Piles visibly growing
-deeper as floors increase communicates foundation cost more directly than any number.
-A BIM-level model would obscure the structural logic under architectural detail — the
-opposite of advisory clarity.
+**Purpose and scope of the 3D model — explicit:**
+The 3D model is a **communication and advisory tool only**. It is not a design tool.
+Users cannot draw, move, resize, or otherwise edit the building geometry. All geometry
+is a direct consequence of parametric inputs (floor count, bouwmethodiek, Step 2 choices).
+The model responds to inputs — it does not accept geometric input.
+
+This distinction MUST be communicated in the UI (e.g. a label: "Parametric preview —
+not a design environment") to set correct expectations for users from architectural
+or BIM backgrounds who may expect to interact with the geometry directly.
+
+**Justification for mandatory 3D:**
+Early-stage masterplan decisions have spatial consequences that numbers alone cannot
+communicate. A user who sees the foundation piles grow deeper as they add floors
+understands foundation cost intuitively — faster and more durably than reading a
+kg CO2/m² figure. The 3D model makes structural engineering logic spatially legible
+to non-engineers, which is the primary audience of this advisory platform.
+This is not a feature — it is the medium through which the advisory message is delivered.
+
+**Rationale**: The chart shows cost over floors. The 3D model shows what physically
+changes and why. Together they make the non-linear CO2 curve spatially self-explanatory.
+A BIM-level model would obscure structural logic under architectural detail — the
+opposite of advisory clarity. A numbers-only UI would require the user to already
+understand what they are learning.
 
 ### VI. Testing Requirements
 
@@ -326,7 +353,51 @@ an order-of-magnitude advisory tool in Phase 1 — not a precision calculator.
   for glazing, swappable module geometry for balcony/shading. Target: < 15k triangles.
   Glazing ratio input MUST be discrete (10% steps) to match data resolution.
 - **No backend server in Phase 1**: All computation client-side via static data.
-- **External dependencies**: Microclimate tool (Phase 2 only) — integration pattern TBD.
+- **External dependencies**: Microclimate tool (Microclimate module only) — integration pattern TBD.
+
+### Canonical File & Folder Structure
+
+Every feature MUST place files according to this structure. Deviations require an amendment.
+
+```
+3d_platform/
+├── index.html                        # Entry point
+├── css/
+│   └── main.css
+├── js/
+│   ├── store.js                      # Central State Store — single source of parametric state
+│   ├── getImpact.js                  # Calculation abstraction layer — ONLY file that reads data/
+│   ├── viewer/                       # Three.js 3D parametric viewer
+│   │   ├── scene.js                  # Scene setup, camera, lighting, render loop
+│   │   ├── tower.js                  # InstancedMesh floors, piles, core, elevator geometry
+│   │   ├── modules.js                # Swappable balcony / solar shading modules (1 floor)
+│   │   └── shaders/
+│   │       └── facade.glsl           # Glazing ratio shader (uniform-driven)
+│   ├── charts/                       # 2D charting (Chart.js)
+│   │   ├── co2MaterialChart.js       # Graph 1: CO2 vs floors (3 lines + threshold bands)
+│   │   ├── co2MarginalChart.js       # Graph 2: CO2 per m² per extra floor
+│   │   └── energyChart.js            # Graph 3: Energy breakdown vs height
+│   ├── ui/                           # Input panels — read from store, write to store
+│   │   ├── step1Panel.js             # Bouwmethodiek, installatie, floor stepper
+│   │   └── step2Panel.js             # Balkons, zonwering, sliders
+│   └── data/                         # Raw data files — imported ONLY by getImpact.js
+│       ├── thresholds.json           # Structural threshold table (versioned)
+│       ├── co2Material.json          # CO2 material lookup table (versioned)
+│       └── co2Energy.json            # Energy use lookup table (versioned)
+├── .specify/
+│   ├── memory/
+│   │   └── constitution.md
+│   └── templates/
+├── concept_spec.md
+└── main.py                           # Placeholder — future calculation engine
+```
+
+**Enforcement rules derived from this structure:**
+- `data/` files MUST only be imported inside `getImpact.js`. Any other import is a violation.
+- `store.js` is the only file that holds state. UI panels read from and write to `store.js` only.
+- `viewer/` files MUST NOT import from `charts/` or `ui/` — they subscribe to `store.js` only.
+- `charts/` files MUST NOT import from `viewer/` — they subscribe to `store.js` only.
+- New modules (Energie, Microclimate) extend this structure — they do not restructure it.
 
 ## Development Workflow
 
@@ -373,4 +444,4 @@ is affected. Compliance MUST be reviewed at every phase boundary.
 Use `concept_spec.md` as the living runtime reference for product decisions.
 Use `.specify/memory/constitution.md` (this file) as the governing principles document.
 
-**Version**: 1.4.0 | **Ratified**: 2026-05-01 | **Last Amended**: 2026-05-01
+**Version**: 1.5.0 | **Ratified**: 2026-05-01 | **Last Amended**: 2026-05-01
