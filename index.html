@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CO₂ Platform — Woontoren</title>
+  <link rel="stylesheet" href="css/main.css">
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.163.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.163.0/examples/jsm/"
+    }
+  }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <h1>CO₂ Platform <span>Woontoren</span></h1>
+    </div>
+    <div class="disclaimer-header">⚠ Indicatieve data — verificatie met team vereist</div>
+  </header>
+
+  <main>
+    <aside id="panel">
+      <!-- Ingevuld door step1Panel.js -->
+    </aside>
+
+    <section id="viewer-section">
+      <div id="three-container">
+        <div class="viewer-label">Parametric preview — not a design environment</div>
+      </div>
+    </section>
+
+    <section id="chart-section">
+      <h3>CO₂ &amp; hoogte — materiaal <span class="chart-unit">kg CO₂/m²</span></h3>
+      <canvas id="co2-chart"></canvas>
+    </section>
+  </main>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
