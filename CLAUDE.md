@@ -1,6 +1,6 @@
 # 3d_platform Development Guidelines
 
-Auto-generated from all feature plans. Last updated: 2026-05-02
+Auto-generated from all feature plans. Last updated: 2026-05-04
 
 ## Active Technologies
 
