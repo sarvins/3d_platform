@@ -72,6 +72,11 @@ export function initStep1Panel(container) {
           <div class="metric-value" id="out-elevators">—</div>
           <span class="metric-unit">aantal</span>
         </div>
+        <div class="metric-card" style="grid-column:1/-1">
+          <div class="metric-label">Energie neutraliteit (dak)</div>
+          <div class="metric-value" id="out-pv">—</div>
+          <span class="metric-unit" id="out-pv-unit">% via dakpanelen</span>
+        </div>
       </div>
 
       <div class="structural-info" id="out-structural">
@@ -87,6 +92,7 @@ export function initStep1Panel(container) {
 
       <p class="tolerance-disclaimer">
         ±5–10 kg CO₂/m² (indicatieve data, brongrafiek)<br>
+        Energie neutraliteit: indicatieve schatting — verificatie vereist.<br>
         Verificatie met team vereist voor adviesgebruik.
       </p>
 
@@ -117,6 +123,21 @@ export function updateOutputs(state, impact) {
   document.getElementById('out-elevators').textContent = impact.structural.elevator_count ?? '—';
   document.getElementById('out-foundation').textContent = impact.structural.foundation_type ?? '—';
   document.getElementById('out-stability').textContent = impact.structural.stability_system ?? '—';
+
+  // Energie neutraliteit
+  const pvEl = document.getElementById('out-pv');
+  const pvUnit = document.getElementById('out-pv-unit');
+  if (impact.energy_neutrality_pct != null) {
+    if (impact.energy_is_positive) {
+      pvEl.textContent = '100';
+      pvUnit.textContent = '% — Energie positief 🌱';
+    } else {
+      pvEl.textContent = impact.energy_neutrality_pct;
+      pvUnit.textContent = '% via dakpanelen';
+    }
+  } else {
+    pvEl.textContent = '—';
+  }
 
   // Highlight active bouwmethodiek radio label
   document.querySelectorAll('#bouwmethodiek-group label').forEach(label => {
