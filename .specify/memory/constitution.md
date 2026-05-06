@@ -138,15 +138,15 @@ a human-readable label. This metadata drives UI advisory moments — it is not o
 | Floors | Height (m) | GFA/floor | Effect | threshold_reached label | Status |
 |---|---|---|---|---|---|
 | < 2 | < 7m | 625 m² | No elevator; shallow foundation | — | confirmed |
-| 9 | ~31.5m | 625 m² | 1st elevator required | `"Vertical Transport Level 1"` | confirmed |
-| ~16 | ~56m | 625 m² | 2nd elevator required | `"Vertical Transport Level 2"` | **assumed** |
-| 28 | ~98m | 625 m² | 3rd elevator required | `"Vertical Transport Level 3"` | confirmed |
-| ~38 | ~133m | 625 m² | 4th elevator required | `"Vertical Transport Level 4"` | assumed |
-| ~71 | 250m | 625 m² | 5th elevator + shell stability (max) | `"Maximum Height Regime"` | confirmed |
+| 9 | 31.5m | 625 m² | 1st elevator required | `"1e lift vereist"` | confirmed |
+| 16 | 56m | 625 m² | 2nd elevator required | `"2e lift vereist"` | confirmed |
+| 28 | 98m | 625 m² | 3rd elevator required | `"3e lift vereist"` | confirmed |
+| 38 | 133m | 625 m² | 4th elevator required | `"4e lift vereist"` | confirmed |
+| 71 | 248.5m | 625 m² | 5th elevator + shell stability (max height) | `"5e lift vereist — maximale hoogte"` | confirmed |
 
-*Floor count is primary input. Height = floors × 3.5m (TODO(FLOOR_HEIGHT): confirm floor height).*
-*Rows marked **assumed** MUST be verified with the team before the lookup table is finalised.*
-*Stability system threshold also needs confirmation — assumed to activate around 9–10 floors.*
+*Floor count is primary input. Height = floors × 3.5m.*
+*TODO(GROUND_FLOOR): Ground floor height will be updated to 5m in a future iteration. When applied, height_m = 5m + (floors − 1) × 3.5m and all height_m values in thresholds.json must be recalculated.*
+*Stability system activates at floor 10 (Kern + skelet) and 38 (Schilstabiliteit).*
 
 **Rationale**: Allowing arbitrary overrides produces physically invalid outputs.
 Threshold metadata ensures cliff edges are visible and drive advisory moments.

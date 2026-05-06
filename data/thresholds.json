@@ -16,8 +16,8 @@
       "gfa_m2": 625,
       "effect": "elevator_2",
       "threshold_reached": "2e lift vereist",
-      "label": "Boven 16 verdiepingen is een tweede lift noodzakelijk voor de vlucht- en gebruikscapaciteit. (aanname — nog te verifiëren)",
-      "confirmed": false
+      "label": "Boven 16 verdiepingen is een tweede lift noodzakelijk voor de vlucht- en gebruikscapaciteit.",
+      "confirmed": true
     },
     {
       "floors": 28,
@@ -34,8 +34,17 @@
       "gfa_m2": 625,
       "effect": "elevator_4",
       "threshold_reached": "4e lift vereist",
-      "label": "Boven 38 verdiepingen is een vierde lift noodzakelijk. Stabiliteit via schilconstructie. (aanname — nog te verifiëren)",
-      "confirmed": false
+      "label": "Boven 38 verdiepingen is een vierde lift noodzakelijk. Stabiliteit via schilconstructie.",
+      "confirmed": true
+    },
+    {
+      "floors": 71,
+      "height_m": 248.5,
+      "gfa_m2": 625,
+      "effect": "elevator_5",
+      "threshold_reached": "5e lift vereist — maximale hoogte",
+      "label": "Op 71 verdiepingen is de maximale hoogte bereikt. Vijf liften vereist. Volledige schilstabiliteit is het dominante structuursysteem.",
+      "confirmed": true
     }
   ]
 }
