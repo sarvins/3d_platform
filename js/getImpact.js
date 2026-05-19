@@ -29,7 +29,7 @@ const CORE_LABELS = {
 
 const DEFAULT_STEP2 = {
   balkons: 'buiten', zonwering: 'extern', raamOppervlak: 50,
-  isolatieRc: 5, luchtdichtheid: 'norm', liftEfficiency: 'standaard',
+  isolatieRc: 5, luchtdichtheid: 4, liftEfficiency: 4,
 };
 
 const ENERGY_CATEGORIES = ['verwarming', 'koeling', 'ventilatie', 'verlichting', 'warmtapwater', 'lift', 'gebruikers'];
@@ -104,8 +104,8 @@ function computeEnergyBreakdown(installatie, floors, step2Params) {
   applyAdj('zonwering',      s2.zonwering);
   applyAdj('raamOppervlak',  String(s2.raamOppervlak));
   applyAdj('isolatieRc',     String(s2.isolatieRc));
-  applyAdj('luchtdichtheid', s2.luchtdichtheid);
-  applyAdj('liftEfficiency', s2.liftEfficiency);
+  applyAdj('luchtdichtheid', String(s2.luchtdichtheid));
+  applyAdj('liftEfficiency', String(s2.liftEfficiency));
 
   const total = +ENERGY_CATEGORIES.reduce((sum, cat) => sum + (base[cat] || 0), 0).toFixed(1);
 

@@ -87,12 +87,13 @@ An urban design professional adjusts the Step 2 continuous controls — window-t
 - **FR-009**: The system MUST offer three discrete zonwering options in Dutch: Extern, Intern, Zonwerend glas.
 - **FR-010**: The system MUST offer a raam oppervlak slider from 30% to 80% in discrete steps of 10% (7 positions: 30, 40, 50, 60, 70, 80%). Current value MUST be displayed numerically.
 - **FR-011**: The system MUST offer a single isolatie slider controlling Rc value (3 to 8) and Uglas value (1.2 to 0.8) simultaneously. Both current values MUST be displayed numerically alongside the slider.
-- **FR-012**: The system MUST offer a luchtdichtheid toggle between two options: Hoog (tight) and Norm (standard).
-- **FR-013**: The system MUST offer a lift efficiency toggle between two options: Zuinig (efficient) and Standaard (standard).
-- **FR-014**: All energy output values MUST be labelled with a tolerance disclaimer (indicatieve data, verificatie vereist).
-- **FR-015**: All Step 2 control labels, option names, chart axis titles, legend labels, and the energie neutraliteit label MUST be in Dutch.
-- **FR-016**: The Energie module MUST be additive — it MUST NOT break or replace any existing Material module output (CO2 chart, 3D viewer, CO2 metric, floor stepper, bouwmethodiek selector).
-- **FR-017**: All energy calculations MUST flow through the existing `getImpact()` abstraction layer. No UI file may read energy lookup data directly.
+- **FR-012**: The system MUST offer a luchtdichtheid slider with Hoog as the minimum label and Norm as the maximum label (two discrete positions).
+- **FR-013**: The system MUST offer a lift efficiency slider with Zuinig as the minimum label and Standaard as the maximum label (two discrete positions).
+- **FR-014**: The system MUST offer an installatie / energie selector in Step 1 with three options: Business as usual, High-tech installatie, and Natuurlijk. Changing the selection MUST update the energy chart and PV percentage within 200ms.
+- **FR-015**: All energy output values MUST be labelled with a tolerance disclaimer (indicatieve data, verificatie vereist).
+- **FR-016**: All Step 2 control labels, option names, chart axis titles, legend labels, and the energie neutraliteit label MUST be in Dutch.
+- **FR-017**: The Energie module MUST be additive — it MUST NOT break or replace any existing Material module output (CO2 chart, 3D viewer, CO2 metric, floor stepper, bouwmethodiek selector).
+- **FR-018**: All energy calculations MUST flow through the existing `getImpact()` abstraction layer. No UI file may read energy lookup data directly.
 
 ### Key Entities
 

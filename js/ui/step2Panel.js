@@ -51,17 +51,21 @@ export function initStep2Panel(container) {
 
       <div class="control-group">
         <span class="control-label">Luchtdichtheid</span>
-        <div class="s2-toggle" id="toggle-lucht">
-          <button class="s2-btn" data-value="hoog">Hoog</button>
-          <button class="s2-btn active" data-value="norm">Norm</button>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:11px;color:var(--blue-mid)">Hoog</span>
+          <input type="range" id="slider-lucht" min="0" max="4" step="1" value="4"
+            style="flex:1;accent-color:var(--blue-dark)">
+          <span style="font-size:11px;color:var(--blue-mid)">Norm</span>
         </div>
       </div>
 
       <div class="control-group">
         <span class="control-label">Lift rendement</span>
-        <div class="s2-toggle" id="toggle-lift">
-          <button class="s2-btn" data-value="zuinig">Zuinig</button>
-          <button class="s2-btn active" data-value="standaard">Standaard</button>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:11px;color:var(--blue-mid)">Zuinig</span>
+          <input type="range" id="slider-lift" min="0" max="4" step="1" value="4"
+            style="flex:1;accent-color:var(--blue-dark)">
+          <span style="font-size:11px;color:var(--blue-mid)">Standaard</span>
         </div>
       </div>
 
@@ -70,17 +74,6 @@ export function initStep2Panel(container) {
       </p>
     </div>
 
-    <style>
-      .s2-toggle { display:flex; gap:4px; }
-      .s2-btn {
-        flex:1; padding:5px 0; font-size:11px; font-weight:500;
-        border:1px solid var(--border); border-radius:5px;
-        background:white; color:var(--blue-text); cursor:pointer;
-        transition:background 0.15s, color 0.15s;
-      }
-      .s2-btn:hover { background:rgba(45,95,138,0.06); }
-      .s2-btn.active { background:var(--blue-dark); color:white; border-color:var(--blue-dark); }
-    </style>
   `;
   container.appendChild(section);
 
@@ -121,21 +114,13 @@ export function initStep2Panel(container) {
     setState({ step2: { isolatieRc: rc } });
   });
 
-  // Luchtdichtheid toggle
-  section.querySelectorAll('#toggle-lucht .s2-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      section.querySelectorAll('#toggle-lucht .s2-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      setState({ step2: { luchtdichtheid: btn.dataset.value } });
-    });
+  // Luchtdichtheid slider (0 = hoog, 4 = norm)
+  section.querySelector('#slider-lucht').addEventListener('input', e => {
+    setState({ step2: { luchtdichtheid: parseInt(e.target.value) } });
   });
 
-  // Lift rendement toggle
-  section.querySelectorAll('#toggle-lift .s2-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      section.querySelectorAll('#toggle-lift .s2-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      setState({ step2: { liftEfficiency: btn.dataset.value } });
-    });
+  // Lift rendement slider (0 = zuinig, 4 = standaard)
+  section.querySelector('#slider-lift').addEventListener('input', e => {
+    setState({ step2: { liftEfficiency: parseInt(e.target.value) } });
   });
 }

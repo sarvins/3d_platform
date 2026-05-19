@@ -51,10 +51,10 @@ function assert(label, condition, detail = '') {
     `nat=${nat.energy_breakdown.total} bau=${bau.energy_breakdown.total}`);
 }
 
-// 6: liftEfficiency zuinig reduces lift at floor 28
+// 6: liftEfficiency 0 (zuinig) reduces lift vs 4 (standaard) at floor 28
 {
-  const std  = getImpact(625, 98, 'business_as_usual', 'business_as_usual', { liftEfficiency: 'standaard' });
-  const zuin = getImpact(625, 98, 'business_as_usual', 'business_as_usual', { liftEfficiency: 'zuinig' });
+  const std  = getImpact(625, 98, 'business_as_usual', 'business_as_usual', { liftEfficiency: 4 });
+  const zuin = getImpact(625, 98, 'business_as_usual', 'business_as_usual', { liftEfficiency: 0 });
   assert('6. zuinig lift < standaard lift', zuin.energy_breakdown.lift < std.energy_breakdown.lift,
     `zuinig=${zuin.energy_breakdown.lift} standaard=${std.energy_breakdown.lift}`);
 }

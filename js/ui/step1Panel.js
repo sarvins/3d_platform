@@ -7,6 +7,12 @@ const BOUWMETHODIEK = [
   { value: 'max_innovatief',         label: 'Max innovatief' },
 ];
 
+const INSTALLATIE = [
+  { value: 'business_as_usual', label: 'Business as usual' },
+  { value: 'high_tech',         label: 'High-tech installatie' },
+  { value: 'natuurlijk',        label: 'Natuurlijk' },
+];
+
 const CORE_LABELS = {
   A: 'Variant A — 6×10m — 60m²',
   B: 'Variant B — 8×10m — 80m²',
@@ -38,6 +44,19 @@ export function initStep1Panel(container) {
           ${BOUWMETHODIEK.map(o => `
             <label class="${o.value === 'business_as_usual' ? 'active' : ''}">
               <input type="radio" name="bouwmethodiek" value="${o.value}"
+                ${o.value === 'business_as_usual' ? 'checked' : ''}>
+              ${o.label}
+            </label>
+          `).join('')}
+        </div>
+      </div>
+
+      <div class="control-group">
+        <span class="control-label">Installatie / Energie</span>
+        <div class="radio-group" id="installatie-group">
+          ${INSTALLATIE.map(o => `
+            <label class="${o.value === 'business_as_usual' ? 'active' : ''}">
+              <input type="radio" name="installatie" value="${o.value}"
                 ${o.value === 'business_as_usual' ? 'checked' : ''}>
               ${o.label}
             </label>
@@ -113,6 +132,10 @@ export function initStep1Panel(container) {
   document.querySelectorAll('input[name="bouwmethodiek"]').forEach(el => {
     el.addEventListener('change', e => setState({ bouwmethodiek: e.target.value }));
   });
+
+  document.querySelectorAll('input[name="installatie"]').forEach(el => {
+    el.addEventListener('change', e => setState({ installatie: e.target.value }));
+  });
 }
 
 export function updateOutputs(state, impact) {
@@ -143,6 +166,12 @@ export function updateOutputs(state, impact) {
   document.querySelectorAll('#bouwmethodiek-group label').forEach(label => {
     const input = label.querySelector('input');
     label.classList.toggle('active', input && input.value === state.bouwmethodiek);
+  });
+
+  // Highlight active installatie radio label
+  document.querySelectorAll('#installatie-group label').forEach(label => {
+    const input = label.querySelector('input');
+    label.classList.toggle('active', input && input.value === state.installatie);
   });
 
   // Advisory callouts for threshold crossings

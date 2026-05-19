@@ -49,12 +49,18 @@
       "8": { "verwarming": 0.70 }
     },
     "luchtdichtheid": {
-      "hoog": { "ventilatie": 0.85 },
-      "norm": {}
+      "0": { "ventilatie": 0.85 },
+      "1": { "ventilatie": 0.89 },
+      "2": { "ventilatie": 0.92 },
+      "3": { "ventilatie": 0.96 },
+      "4": {}
     },
     "liftEfficiency": {
-      "zuinig":    { "lift": 0.60 },
-      "standaard": {}
+      "0": { "lift": 0.60 },
+      "1": { "lift": 0.70 },
+      "2": { "lift": 0.80 },
+      "3": { "lift": 0.90 },
+      "4": {}
     }
   }
 }
