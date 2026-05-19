@@ -26,15 +26,25 @@ let _selectedKey = 'business_as_usual';
 
 const SCENARIOS = ['business_as_usual', 'hoogwaardig_hybride', 'best_practice_biobased'];
 
-// marginal[N] = avg[N]×N − avg[N-1]×(N-1); clamp to 0 (negatives are data artifacts at threshold downslopes)
-function computeMarginals(avgValues) {
-  return avgValues.map((avg, i) => {
-    const floor = i + 2;
-    const cur = avg * floor;
-    const prevAvg = i === 0 ? avg : avgValues[i - 1];
-    const prev = prevAvg * (floor - 1);
-    return Math.max(0, Math.round(cur - prev));
-  });
+// CO2 added per floor — direct from Excel "co2 average vs per floor.xlsx" rows 10-11.
+// Floors 2-32: exact Excel values. Floors 33-71: +5/floor pattern extended with threshold spikes at 38 (+30) and 71 (+30).
+const ADDED_BAU = [
+  // fl 2-32 (Excel)
+  50,50,75,80,85,90,120,100,105,110,115,120,150,130,135,140,145,150,155,160,165,170,175,180,185,190,195,200,205,210,215,
+  // fl 33-37
+  220,225,230,235,240,
+  // fl 38 threshold spike
+  270,
+  // fl 39-70
+  250,255,260,265,270,275,280,285,290,295,300,305,310,315,320,325,330,335,340,345,350,355,360,365,370,375,380,385,390,395,400,405,
+  // fl 71 threshold spike
+  435,
+];
+
+const SCALE = { business_as_usual: 1.0, hoogwaardig_hybride: 0.65, best_practice_biobased: 0.50 };
+
+function getMarginals(key) {
+  return ADDED_BAU.map(v => Math.round(v * SCALE[key]));
 }
 
 const floorMarkerPlugin = {
@@ -78,7 +88,7 @@ const floorMarkerPlugin = {
 };
 
 function makeDatasets(datasets, selectedKey) {
-  const marginals = computeMarginals(datasets[selectedKey]);
+  const marginals = getMarginals(selectedKey);
   const barDs = {
     type: 'bar',
     label: 'Marginale CO₂',
@@ -176,7 +186,7 @@ export function updateCo2Chart(bouwmethodiek) {
   const { datasets } = getChartData();
   // dataset[0] = marginal bar, datasets[1..3] = scenario lines
   const bar = _chart.data.datasets[0];
-  bar.data = computeMarginals(datasets[bouwmethodiek]);
+  bar.data = getMarginals(bouwmethodiek);
   bar.backgroundColor = COLORS[bouwmethodiek] + '40';
   _chart.data.datasets.slice(1).forEach((ds, i) => {
     const key = SCENARIOS[i];
