@@ -97,12 +97,12 @@ An urban design professional wants to show a client the structural consequence o
 **US3 — Section view**
 
 - **FR-010**: The viewer MUST offer a three-option view toggle: "3D", "Front sectie", "Links sectie". Default is "3D".
-- **FR-011**: In "Front sectie" mode the viewer MUST render an orthographic front cross-section showing the building above grade and foundation piles below grade.
-- **FR-012**: In "Links sectie" mode the viewer MUST render an orthographic left-side cross-section showing the same elements from the perpendicular axis.
+- **FR-011**: In "Front sectie" mode the viewer MUST render an orthographic front cross-section showing the building above grade and foundation piles below grade. The camera frustum MUST auto-fit to always include the full building height and full pile depth — no content may be clipped when the view is at its default zoom level.
+- **FR-012**: In "Links sectie" mode the viewer MUST render an orthographic left-side cross-section showing the same elements from the perpendicular axis, with the same auto-fit requirement.
 - **FR-013**: Both section views MUST display a depth annotation showing the approximate pile depth in metres.
 - **FR-014**: The view toggle MUST be located in or directly adjacent to the viewer area, not in the left control panel.
 - **FR-015**: Switching view modes MUST NOT reset any parameter in the central store (floor count, bouwmethodiek, installatie, Step 2 values).
-- **FR-016**: The 3D orbital controls (rotate, zoom, pan) MUST remain fully functional in "3D" mode. Section views use a fixed orthographic camera with no user rotation.
+- **FR-016**: The 3D orbital controls (rotate, zoom, pan) MUST remain fully functional in "3D" mode. Section views use a fixed orthographic camera with no user rotation. Users MAY scroll to zoom in within a section view (minimum zoom = auto-fit level; maximum zoom = 10× auto-fit). Switching view modes resets zoom to the auto-fit level.
 - **FR-017**: All view toggle labels and section view annotations MUST be in Dutch.
 
 ### Key Entities

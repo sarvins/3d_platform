@@ -70,6 +70,15 @@ export function initScene(container) {
   _grid.material.transparent = true;
   scene.add(_grid);
 
+  // Scroll-to-zoom in section modes (zoom in only; minimum = 1 = auto-fit)
+  _renderer.domElement.addEventListener('wheel', e => {
+    if (_activeCamera !== _orthoCamera) return;
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? -0.15 : 0.15;
+    _orthoCamera.zoom = Math.max(1, Math.min(10, _orthoCamera.zoom + delta));
+    _orthoCamera.updateProjectionMatrix();
+  }, { passive: false });
+
   new ResizeObserver(() => {
     const nw = container.clientWidth;
     const nh = container.clientHeight;
@@ -106,6 +115,7 @@ export function setViewMode(mode) {
     _controls.enabled = false;
     _ground.visible = false;
     _grid.visible = false;
+    _orthoCamera.zoom = 1; // reset to auto-fit on mode switch
     const pos = mode === 'front_sectie'
       ? [0, _midY, 30]
       : [30, _midY, 0];
@@ -118,9 +128,14 @@ export function setViewMode(mode) {
 }
 
 export function updateOrthoCamera(towerH, pileDepthScene) {
-  _midY = (towerH - pileDepthScene) / 2;
-  _orthoCamera.top    =  towerH + 2;
-  _orthoCamera.bottom = -(pileDepthScene + 1.5);
+  // Pile tip is at -(pileDepthScene + 0.25) in world Y (from tower.js pile placement)
+  // midY = midpoint between building roof and pile tip
+  _midY = (towerH - pileDepthScene - 0.25) / 2;
+  // halfH = half the total visible range + 2 unit margin
+  const halfH = (towerH + pileDepthScene + 0.25) / 2 + 2;
+  // top/bottom are camera-local offsets from _midY, so world range = [_midY-halfH, _midY+halfH]
+  _orthoCamera.top    =  halfH;
+  _orthoCamera.bottom = -halfH;
   _orthoCamera.left   = -7;
   _orthoCamera.right  =  7;
   _orthoCamera.updateProjectionMatrix();
