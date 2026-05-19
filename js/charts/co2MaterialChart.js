@@ -26,6 +26,17 @@ let _selectedKey = 'business_as_usual';
 
 const SCENARIOS = ['business_as_usual', 'hoogwaardig_hybride', 'best_practice_biobased'];
 
+// marginal[N] = avg[N]×N − avg[N-1]×(N-1); clamp to 0 (negatives are data artifacts at threshold downslopes)
+function computeMarginals(avgValues) {
+  return avgValues.map((avg, i) => {
+    const floor = i + 2;
+    const cur = avg * floor;
+    const prevAvg = i === 0 ? avg : avgValues[i - 1];
+    const prev = prevAvg * (floor - 1);
+    return Math.max(0, Math.round(cur - prev));
+  });
+}
+
 const floorMarkerPlugin = {
   id: 'floorMarker',
   afterDraw(chart) {
@@ -67,7 +78,18 @@ const floorMarkerPlugin = {
 };
 
 function makeDatasets(datasets, selectedKey) {
-  return SCENARIOS.map(key => {
+  const marginals = computeMarginals(datasets[selectedKey]);
+  const barDs = {
+    type: 'bar',
+    label: 'Marginale CO₂',
+    data: marginals,
+    backgroundColor: COLORS[selectedKey] + '40',
+    borderWidth: 0,
+    order: 3,
+    pointRadius: 0,
+    fill: false,
+  };
+  const lineDs = SCENARIOS.map(key => {
     const isSel = key === selectedKey;
     return {
       label: LABELS_NL[key],
@@ -82,6 +104,7 @@ function makeDatasets(datasets, selectedKey) {
       order: isSel ? 1 : 2,
     };
   });
+  return [barDs, ...lineDs];
 }
 
 export function initCo2MaterialChart(canvas) {
@@ -104,10 +127,10 @@ export function initCo2MaterialChart(canvas) {
             generateLabels(chart) {
               return chart.data.datasets.map((ds, i) => ({
                 text: ds.label,
-                fillStyle: ds.borderColor,
-                strokeStyle: ds.borderColor,
-                lineWidth: ds.borderWidth,
-                lineDash: ds.borderDash,
+                fillStyle: ds.borderColor || ds.backgroundColor,
+                strokeStyle: ds.borderColor || ds.backgroundColor,
+                lineWidth: ds.borderWidth || 0,
+                lineDash: ds.borderDash || [],
                 hidden: false,
                 datasetIndex: i,
               }));
@@ -127,12 +150,7 @@ export function initCo2MaterialChart(canvas) {
           ticks: {
             font: { size: 9 },
             maxTicksLimit: 14,
-            callback: (val, idx) => {
-              // val is the category label string for categorical scales
-              const lbl = String(val);
-              const n = parseInt(lbl);
-              return n % 35 === 0 || n === 7 ? lbl : '';
-            },
+            callback: (val, idx) => idx % 5 === 0 ? val : '',
           },
           grid: { color: 'rgba(0,0,0,0.04)' },
         },
@@ -156,13 +174,15 @@ export function updateCo2Chart(bouwmethodiek) {
   if (!_chart) return;
   _selectedKey = bouwmethodiek;
   const { datasets } = getChartData();
-  _chart.data.datasets.forEach((ds, i) => {
+  // dataset[0] = marginal bar, datasets[1..3] = scenario lines
+  const bar = _chart.data.datasets[0];
+  bar.data = computeMarginals(datasets[bouwmethodiek]);
+  bar.backgroundColor = COLORS[bouwmethodiek] + '40';
+  _chart.data.datasets.slice(1).forEach((ds, i) => {
     const key = SCENARIOS[i];
     const isSel = key === bouwmethodiek;
     ds.borderWidth = isSel ? 2.5 : 1.2;
     ds.borderDash = isSel ? [] : [5, 3];
-    ds.backgroundColor = isSel ? COLORS[key] + '18' : 'transparent';
-    ds.fill = isSel ? 'origin' : false;
     ds.order = isSel ? 1 : 2;
   });
   _chart.update('none');
