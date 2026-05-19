@@ -1,7 +1,7 @@
 import { subscribe } from './store.js';
 import { getImpact } from './getImpact.js';
-import { initScene } from './viewer/scene.js';
-import { Tower } from './viewer/tower.js';
+import { initScene, setViewMode } from './viewer/scene.js';
+import { Tower, getPileDepthM } from './viewer/tower.js';
 import { initCo2MaterialChart, updateMarker } from './charts/co2MaterialChart.js';
 import { initEnergyChart, updateEnergyChart } from './charts/energyChart.js';
 import { initStep1Panel, updateOutputs } from './ui/step1Panel.js';
@@ -18,10 +18,23 @@ initStep2Panel(panel);
 initCo2MaterialChart(document.getElementById('co2-chart'));
 initEnergyChart(document.getElementById('energy-chart'));
 
+// View toggle
+const pileLabel = document.getElementById('pile-depth-label');
+document.querySelectorAll('.view-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const mode = btn.dataset.mode;
+    setViewMode(mode);
+    pileLabel.style.display = mode === 'perspective' ? 'none' : 'block';
+  });
+});
+
 subscribe((state) => {
   const impact = getImpact(625, state.floors * 3.5, state.bouwmethodiek, state.installatie, state.step2);
   tower.update(state.floors, impact);
   updateOutputs(state, impact);
   updateMarker(state.floors);
   updateEnergyChart(state, impact);
+  pileLabel.textContent = `Paaldiepte: ~${getPileDepthM(state.floors)}m`;
 });

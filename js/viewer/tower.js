@@ -1,5 +1,9 @@
 import * as THREE from 'three';
-import { setCameraTarget } from './scene.js';
+import { setCameraTarget, updateOrthoCamera } from './scene.js';
+
+export function getPileDepthM(floors) {
+  return Math.round(Math.max(0.8, floors * 0.12) * 7);
+}
 
 const FLOOR_HEIGHT = 0.5;
 const SLAB_H       = 0.38;
@@ -70,8 +74,8 @@ export class Tower {
     this._elevatorGroup = new THREE.Group();
     this.group.add(this._elevatorGroup);
     this._elevatorMeshes = [];
-    const xPositions = [-0.45, -0.15, 0.15, 0.45];
-    for (let i = 0; i < 4; i++) {
+    const xPositions = [-0.6, -0.3, 0, 0.3, 0.6];
+    for (let i = 0; i < 5; i++) {
       const geo = new THREE.BoxGeometry(0.22, 1, 0.22);
       const mesh = new THREE.Mesh(geo, MAT.elevator);
       mesh.position.x = xPositions[i];
@@ -123,6 +127,8 @@ export class Tower {
       this._floorMesh.instanceMatrix.needsUpdate = true;
       this._updatePiles(floors);
       setCameraTarget(towerH * 0.45);
+      const pileDepthScene = Math.max(0.8, floors * 0.12);
+      updateOrthoCamera(towerH, pileDepthScene);
     }
 
     // Core — update on every call since height always changes with floors

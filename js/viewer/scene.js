@@ -2,9 +2,13 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 let _renderer, _camera, _controls;
+let _orthoCamera, _activeCamera;
+let _ground, _grid, _scene;
+let _midY = 4;
 
 export function initScene(container) {
   const scene = new THREE.Scene();
+  _scene = scene;
   scene.background = new THREE.Color(0xB8D4E8);
   scene.fog = new THREE.Fog(0xB8D4E8, 70, 130);
 
@@ -20,6 +24,11 @@ export function initScene(container) {
 
   _camera = new THREE.PerspectiveCamera(40, w / h, 0.1, 200);
   _camera.position.set(14, 8, 14);
+
+  _orthoCamera = new THREE.OrthographicCamera(-7, 7, 10, -5, 0.1, 200);
+  _orthoCamera.position.set(0, _midY, 30);
+  _orthoCamera.lookAt(0, _midY, 0);
+  _activeCamera = _camera;
 
   _controls = new OrbitControls(_camera, _renderer.domElement);
   _controls.enableDamping = true;
@@ -51,15 +60,15 @@ export function initScene(container) {
 
   const groundGeo = new THREE.PlaneGeometry(60, 60);
   const groundMat = new THREE.MeshLambertMaterial({ color: 0xD8E8D0 });
-  const ground = new THREE.Mesh(groundGeo, groundMat);
-  ground.rotation.x = -Math.PI / 2;
-  ground.receiveShadow = true;
-  scene.add(ground);
+  _ground = new THREE.Mesh(groundGeo, groundMat);
+  _ground.rotation.x = -Math.PI / 2;
+  _ground.receiveShadow = true;
+  scene.add(_ground);
 
-  const grid = new THREE.GridHelper(40, 40, 0xaaccaa, 0xaaccaa);
-  grid.material.opacity = 0.25;
-  grid.material.transparent = true;
-  scene.add(grid);
+  _grid = new THREE.GridHelper(40, 40, 0xaaccaa, 0xaaccaa);
+  _grid.material.opacity = 0.25;
+  _grid.material.transparent = true;
+  scene.add(_grid);
 
   new ResizeObserver(() => {
     const nw = container.clientWidth;
@@ -67,12 +76,13 @@ export function initScene(container) {
     _renderer.setSize(nw, nh);
     _camera.aspect = nw / nh;
     _camera.updateProjectionMatrix();
+    _orthoCamera.updateProjectionMatrix();
   }).observe(container);
 
   (function animate() {
     requestAnimationFrame(animate);
     _controls.update();
-    _renderer.render(scene, _camera);
+    _renderer.render(scene, _activeCamera);
   })();
 
   return scene;
@@ -81,4 +91,41 @@ export function initScene(container) {
 export function setCameraTarget(y) {
   if (!_controls) return;
   _controls.target.set(0, Math.max(2, y), 0);
+}
+
+export function setViewMode(mode) {
+  if (mode === 'perspective') {
+    _activeCamera = _camera;
+    _controls.enabled = true;
+    _ground.visible = true;
+    _grid.visible = true;
+    _scene.background.set(0xB8D4E8);
+    _scene.fog.near = 70; _scene.fog.far = 130;
+  } else {
+    _activeCamera = _orthoCamera;
+    _controls.enabled = false;
+    _ground.visible = false;
+    _grid.visible = false;
+    const pos = mode === 'front_sectie'
+      ? [0, _midY, 30]
+      : [30, _midY, 0];
+    _scene.background.set(0xF5F5F5);
+    _scene.fog.near = 500; _scene.fog.far = 600;
+    _orthoCamera.position.set(...pos);
+    _orthoCamera.lookAt(0, _midY, 0);
+    _orthoCamera.updateProjectionMatrix();
+  }
+}
+
+export function updateOrthoCamera(towerH, pileDepthScene) {
+  _midY = (towerH - pileDepthScene) / 2;
+  _orthoCamera.top    =  towerH + 2;
+  _orthoCamera.bottom = -(pileDepthScene + 1.5);
+  _orthoCamera.left   = -7;
+  _orthoCamera.right  =  7;
+  _orthoCamera.updateProjectionMatrix();
+  if (_activeCamera === _orthoCamera) {
+    _orthoCamera.position.y = _midY;
+    _orthoCamera.lookAt(0, _midY, 0);
+  }
 }

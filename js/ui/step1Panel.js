@@ -33,7 +33,7 @@ export function initStep1Panel(container) {
         <span class="control-label">Verdiepingen</span>
         <div class="floor-stepper">
           <button id="btn-minus" aria-label="Verdieping verwijderen">−</button>
-          <div class="floor-value" id="floor-display">10</div>
+          <input type="number" id="floor-display" class="floor-value" min="2" max="71" value="10">
           <button id="btn-plus" aria-label="Verdieping toevoegen">+</button>
         </div>
       </div>
@@ -109,6 +109,11 @@ export function initStep1Panel(container) {
         </div>
       </div>
 
+      <div id="consequence-panel" class="consequence-panel">
+        <div class="consequence-label">Constructieve consequentie</div>
+        <div id="consequence-text" class="consequence-text">—</div>
+      </div>
+
       <p class="tolerance-disclaimer">
         ±5–10 kg CO₂/m² (indicatieve data, brongrafiek)<br>
         Energie neutraliteit: indicatieve schatting — verificatie vereist.<br>
@@ -129,6 +134,15 @@ export function initStep1Panel(container) {
     if (floors < 71) setState({ floors: floors + 1 });
   });
 
+  const floorInput = document.getElementById('floor-display');
+  floorInput.addEventListener('change', e => {
+    const { floors: prev } = getState();
+    const parsed = parseInt(e.target.value);
+    const clamped = isNaN(parsed) ? prev : Math.max(2, Math.min(71, Math.round(parsed)));
+    e.target.value = clamped;
+    setState({ floors: clamped });
+  });
+
   document.querySelectorAll('input[name="bouwmethodiek"]').forEach(el => {
     el.addEventListener('change', e => setState({ bouwmethodiek: e.target.value }));
   });
@@ -139,7 +153,7 @@ export function initStep1Panel(container) {
 }
 
 export function updateOutputs(state, impact) {
-  document.getElementById('floor-display').textContent = state.floors;
+  document.getElementById('floor-display').value = state.floors;
   document.getElementById('out-floors').textContent = state.floors;
   document.getElementById('out-co2').textContent = impact.co2_material_kg_m2 ?? '—';
   document.getElementById('out-core').textContent = CORE_LABELS[impact.structural.core_variant] ?? '—';
@@ -160,6 +174,23 @@ export function updateOutputs(state, impact) {
     }
   } else {
     pvEl.textContent = '—';
+  }
+
+  // Consequence panel
+  const elevMap = {
+    0: 'Geen lift vereist', 1: '1 lift vereist', 2: '2 liften vereist',
+    3: '3 liften vereist', 4: '4 liften vereist', 5: '5 liften vereist — maximale hoogte',
+  };
+  const elevText  = elevMap[impact.structural.elevator_count] ?? '—';
+  const foundText = impact.structural.foundation_type ?? '—';
+  const stabText  = impact.structural.stability_system ?? '—';
+  document.getElementById('consequence-text').textContent = `${elevText} · ${foundText} · ${stabText}`;
+  if (impact.thresholds_crossed.length > 0) {
+    const panel = document.getElementById('consequence-panel');
+    panel.classList.remove('consequence-flash');
+    void panel.offsetWidth;
+    panel.classList.add('consequence-flash');
+    setTimeout(() => panel.classList.remove('consequence-flash'), 1500);
   }
 
   // Highlight active bouwmethodiek radio label
