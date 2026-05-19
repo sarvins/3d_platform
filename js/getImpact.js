@@ -1,6 +1,6 @@
-import thresholdsData from '../data/thresholds.json' with { type: 'json' };
-import co2MaterialData from '../data/co2Material.json' with { type: 'json' };
-import energyData from '../data/energyData.json' with { type: 'json' };
+import thresholdsData from '../data/thresholds.js';
+import co2MaterialData from '../data/co2Material.js';
+import energyData from '../data/energyData.js';
 
 const THRESHOLDS = thresholdsData.thresholds;
 const DATA_VERSION = thresholdsData.data_version;
