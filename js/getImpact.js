@@ -181,7 +181,7 @@ export function getChartData() {
     best_practice_biobased: [], max_innovatief: [],
   };
   for (let f = 2; f <= 71; f++) {
-    labels.push(f);
+    labels.push(Math.round(f * FLOOR_HEIGHT_M) + 'm');
     for (const key of Object.keys(datasets)) {
       datasets[key].push(interpolate(CO2_MATERIAL_DATA[key], f));
     }

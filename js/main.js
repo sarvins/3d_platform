@@ -2,7 +2,7 @@ import { subscribe } from './store.js';
 import { getImpact } from './getImpact.js';
 import { initScene, setViewMode } from './viewer/scene.js';
 import { Tower, getPileDepthM } from './viewer/tower.js';
-import { initCo2MaterialChart, updateMarker, updateMarginalBars } from './charts/co2MaterialChart.js';
+import { initCo2MaterialChart, updateMarker, updateCo2Chart } from './charts/co2MaterialChart.js';
 import { initEnergyChart, updateEnergyChart } from './charts/energyChart.js';
 import { initStep1Panel, updateOutputs } from './ui/step1Panel.js';
 import { initStep2Panel } from './ui/step2Panel.js';
@@ -125,7 +125,7 @@ subscribe((state) => {
   tower.update(state.floors, impact);
   updateOutputs(state, impact);
   updateMarker(state.floors);
-  updateMarginalBars(state.bouwmethodiek);
+  updateCo2Chart(state.bouwmethodiek);
   updateEnergyChart(state, impact);
   pileLabel.textContent = `Paaldiepte: ~${getPileDepthM(state.floors)}m`;
 });
