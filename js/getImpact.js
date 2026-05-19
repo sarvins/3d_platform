@@ -180,7 +180,7 @@ export function getChartData() {
     business_as_usual: [], hoogwaardig_hybride: [],
     best_practice_biobased: [], max_innovatief: [],
   };
-  for (let f = 2; f <= 50; f++) {
+  for (let f = 2; f <= 71; f++) {
     labels.push(f);
     for (const key of Object.keys(datasets)) {
       datasets[key].push(interpolate(CO2_MATERIAL_DATA[key], f));

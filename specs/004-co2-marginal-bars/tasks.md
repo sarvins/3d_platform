@@ -19,7 +19,7 @@
 
 ## Phase 1: Setup
 
-- [ ] T001 Run all 5 existing tests to confirm baseline — `node tests/thresholdIntegrity.js && node tests/dataVersion.js && node tests/getImpactSnapshot.js && node tests/abstractionBoundary.js && node tests/energySnapshot.js` — all must pass before any changes
+- [x] T001 Run all 5 existing tests to confirm baseline — `node tests/thresholdIntegrity.js && node tests/dataVersion.js && node tests/getImpactSnapshot.js && node tests/abstractionBoundary.js && node tests/energySnapshot.js` — all must pass before any changes
 
 ---
 
@@ -29,9 +29,9 @@
 
 **Independent Test**: Set floor count to 60 — CO2 Materiaal card shows a value above the floor 50 value (248 kg CO₂/m² for BAU). Set floor count to 71 — value spikes visibly above floor 70. Run all 5 tests — all pass.
 
-- [ ] T002 [US2] Extend `data/co2Material.json` — append 6 control points to each of the 4 bouwmethodiek arrays after the existing `[50, x]` entry: `business_as_usual`: add `[51,250],[55,258],[60,271],[65,283],[70,295],[71,328]`; `hoogwaardig_hybride`: add `[51,177],[55,182],[60,191],[65,200],[70,208],[71,232]`; `best_practice_biobased`: add `[51,160],[55,165],[60,173],[65,180],[70,188],[71,210]`; `max_innovatief`: add `[51,150],[55,155],[60,162],[65,170],[70,176],[71,198]`; do NOT change `data_version` or any existing control points
+- [x] T002 [US2] Extend `data/co2Material.json` — append 6 control points to each of the 4 bouwmethodiek arrays after the existing `[50, x]` entry: `business_as_usual`: add `[51,250],[55,258],[60,271],[65,283],[70,295],[71,328]`; `hoogwaardig_hybride`: add `[51,177],[55,182],[60,191],[65,200],[70,208],[71,232]`; `best_practice_biobased`: add `[51,160],[55,165],[60,173],[65,180],[70,188],[71,210]`; `max_innovatief`: add `[51,150],[55,155],[60,162],[65,170],[70,176],[71,198]`; do NOT change `data_version` or any existing control points
 
-- [ ] T003 [US2] Extend `js/getImpact.js` — in `getChartData()`, change `for (let f = 2; f <= 50; f++)` to `for (let f = 2; f <= 71; f++)` (line 183); no other changes to this function or its return type
+- [x] T003 [US2] Extend `js/getImpact.js` — in `getChartData()`, change `for (let f = 2; f <= 50; f++)` to `for (let f = 2; f <= 71; f++)` (line 183); no other changes to this function or its return type
 
 **Checkpoint**: Run all 5 tests — must still pass. Open platform, set floors to 60, verify CO2 card shows ~271 kg CO₂/m² (BAU). Set floors to 71, verify value is ~328 and higher than at floor 70.
 
@@ -43,7 +43,7 @@
 
 **Independent Test**: Open platform — bars visible behind lines. Bars at floors 9, 16, 28, 38, 71 are taller than neighbours. Switch bouwmethodiek — bars update colour and height within 200ms. Tooltip shows "Marginale CO₂: X kg CO₂/m²" for bars. Floor 71 amber threshold line appears on chart.
 
-- [ ] T004 [US1] Rewrite `js/charts/co2MaterialChart.js` — make these changes to `initCo2MaterialChart(canvas)`:
+- [x] T004 [US1] Rewrite `js/charts/co2MaterialChart.js` — make these changes to `initCo2MaterialChart(canvas)`:
 
   (1) Update `THRESHOLD_FLOORS` from `[9, 16, 28, 38]` to `[9, 16, 28, 38, 71]` and `THRESHOLD_LABELS` from `['1e lift', '2e lift', '3e lift', '4e lift']` to `['1e lift', '2e lift', '3e lift', '4e lift', '5e lift']`
 
@@ -75,7 +75,7 @@
   }
   ```
 
-- [ ] T005 [US1] Add `export function updateMarginalBars(bouwmethodiek)` to `js/charts/co2MaterialChart.js` — after `updateMarker`:
+- [x] T005 [US1] Add `export function updateMarginalBars(bouwmethodiek)` to `js/charts/co2MaterialChart.js` — after `updateMarker`:
   ```javascript
   export function updateMarginalBars(bouwmethodiek) {
     if (!_chart) return;
@@ -90,7 +90,7 @@
   }
   ```
 
-- [ ] T006 [US1] Extend `js/main.js` — add `updateMarginalBars` to the import from `./charts/co2MaterialChart.js`; add `updateMarginalBars(state.bouwmethodiek)` call inside the `subscribe` callback, after the existing `updateMarker(state.floors)` call
+- [x] T006 [US1] Extend `js/main.js` — add `updateMarginalBars` to the import from `./charts/co2MaterialChart.js`; add `updateMarginalBars(state.bouwmethodiek)` call inside the `subscribe` callback, after the existing `updateMarker(state.floors)` call
 
 **Checkpoint**: Open platform — bars visible, reactive to bouwmethodiek, tooltip shows marginal label, floor 71 threshold annotation present.
 
@@ -98,7 +98,7 @@
 
 ## Phase 4: Polish
 
-- [ ] T007 Run all 5 tests to confirm no regression — `node tests/thresholdIntegrity.js && node tests/dataVersion.js && node tests/getImpactSnapshot.js && node tests/abstractionBoundary.js && node tests/energySnapshot.js`; then open platform and manually validate all 5 quickstart.md scenarios; confirm energy chart, 3D viewer, consequence panel, section view toggle, and all Step 2 controls still function correctly
+- [x] T007 Run all 5 tests to confirm no regression — `node tests/thresholdIntegrity.js && node tests/dataVersion.js && node tests/getImpactSnapshot.js && node tests/abstractionBoundary.js && node tests/energySnapshot.js`; then open platform and manually validate all 5 quickstart.md scenarios; confirm energy chart, 3D viewer, consequence panel, section view toggle, and all Step 2 controls still function correctly
 
 ---
 
