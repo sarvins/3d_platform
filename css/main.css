@@ -467,11 +467,47 @@ body::before {
 
 .right-col {
   display: grid;
-  grid-template-rows: 1fr 380px;
-  gap: var(--gutter);
+  grid-template-rows: 1fr 10px 380px;
+  row-gap: 4px;
   min-width: 0;
   min-height: 0;
 }
+
+/* resize handle */
+.resize-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: ns-resize;
+  user-select: none;
+  background: transparent;
+  position: relative;
+}
+.resize-handle .grip {
+  display: flex;
+  gap: 3px;
+  pointer-events: none;
+}
+.resize-handle .grip span {
+  width: 3px; height: 3px;
+  background: var(--c-line);
+  border-radius: 50%;
+  transition: background 0.15s;
+}
+.resize-handle:hover .grip span { background: var(--c-mid); }
+.resize-handle .collapse-btn {
+  background: rgba(255,255,255,0.9);
+  border: 1px solid var(--c-line);
+  color: var(--c-muted);
+  font-size: 10px;
+  cursor: pointer;
+  padding: 1px 6px;
+  line-height: 1.4;
+  font-family: inherit;
+  transition: background 0.15s, color 0.15s;
+}
+.resize-handle .collapse-btn:hover { background: var(--c-light); color: var(--c-deep); }
 
 /* ---------- 3D Viewer ---------- */
 
