@@ -73,12 +73,12 @@ function makeDatasets(datasets, selectedKey) {
       label: LABELS_NL[key],
       data: datasets[key],
       borderColor: COLORS[key],
-      backgroundColor: isSel ? COLORS[key] + '18' : 'transparent',
+      backgroundColor: 'transparent',
       borderWidth: isSel ? 2.5 : 1.2,
       borderDash: isSel ? [] : [5, 3],
       pointRadius: 0,
       tension: 0.3,
-      fill: isSel ? 'origin' : false,
+      fill: false,
       order: isSel ? 1 : 2,
     };
   });
@@ -126,10 +126,10 @@ export function initCo2MaterialChart(canvas) {
           title: { display: true, text: 'Hoogte (m)', font: { size: 11 } },
           ticks: {
             font: { size: 9 },
-            maxTicksLimit: 15,
-            callback: (val, idx, ticks) => {
-              const lbl = _chart.data.labels[idx];
-              if (!lbl) return '';
+            maxTicksLimit: 14,
+            callback: (val, idx) => {
+              // val is the category label string for categorical scales
+              const lbl = String(val);
               const n = parseInt(lbl);
               return n % 35 === 0 || n === 7 ? lbl : '';
             },
