@@ -20,10 +20,10 @@ initEnergyChart(document.getElementById('energy-chart'));
 
 // View toggle
 const pileLabel = document.getElementById('pile-depth-label');
-document.querySelectorAll('.view-btn').forEach(btn => {
+document.querySelectorAll('#view-toggle button').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+    document.querySelectorAll('#view-toggle button').forEach(b => b.classList.remove('sel'));
+    btn.classList.add('sel');
     const mode = btn.dataset.mode;
     setViewMode(mode);
     pileLabel.style.display = mode === 'perspective' ? 'none' : 'block';
